@@ -62,13 +62,13 @@ func (cli *Client) Info(code string) (Info, error) {
 		args.Set("secid", "0."+code)
 	}
 	var data struct {
-		Code     string  `json:"f57"`  // 代码
-		Name     string  `json:"f58"`  // 名称
-		TotalCap float64 `json:"f116"` // 总市值
-		FloatCap float64 `json:"f117"` // 流通市值
-		Industry string  `json:"f127"` // 行业
-		Area     string  `json:"f128"` // 地区
-		Sectors  string  `json:"f129"` // 概念板块
+		Code     string    `json:"f57"`  // 代码
+		Name     string    `json:"f58"`  // 名称
+		TotalCap naFloat64 `json:"f116"` // 总市值
+		FloatCap naFloat64 `json:"f117"` // 流通市值
+		Industry string    `json:"f127"` // 行业
+		Area     string    `json:"f128"` // 地区
+		Sectors  string    `json:"f129"` // 概念板块
 	}
 	var info Info
 	err := cli.call("/qt/stock/get", args, &data)
