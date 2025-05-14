@@ -40,18 +40,20 @@ func (cli *Client) Basic() ([]BasicItem, error) {
 }
 
 type Info struct {
-	Code     string
-	Name     string
-	Industry string
-	Area     string
-	Sectors  []string
+	Code     string   // 股票代码
+	Name     string   // 股票名称
+	Industry string   // 行业
+	Area     string   // 地区
+	Sectors  []string // 概念板块
+	TotalCap int64    // 总市值
+	FloatCap int64    // 流通市值
 }
 
 // Info 获取某只个股的基本信息
 func (cli *Client) Info(code string) (Info, error) {
 	args := make(url.Values)
-	// f57(代码)、f58(名称)、f127(行业)、f128(地区)、f129(概念板块)
-	args.Set("fields", "f57,f58,f127,f128,f129")
+	// f57(代码)、f58(名称)、f116(总市值)、f117(流通市值)、f127(行业)、f128(地区)、f129(概念板块)
+	args.Set("fields", "f57,f58,f116,f117,f127,f128,f129")
 	args.Set("fltt", "2")
 	args.Set("invt", "2")
 	if code[0] == '6' {
@@ -60,11 +62,13 @@ func (cli *Client) Info(code string) (Info, error) {
 		args.Set("secid", "0."+code)
 	}
 	var data struct {
-		Code     string `json:"f57"`  // 代码
-		Name     string `json:"f58"`  // 名称
-		Industry string `json:"f127"` // 行业
-		Area     string `json:"f128"` // 地区
-		Sectors  string `json:"f129"` // 概念板块
+		Code     string  `json:"f57"`  // 代码
+		Name     string  `json:"f58"`  // 名称
+		TotalCap float64 `json:"f116"` // 总市值
+		FloatCap float64 `json:"f117"` // 流通市值
+		Industry string  `json:"f127"` // 行业
+		Area     string  `json:"f128"` // 地区
+		Sectors  string  `json:"f129"` // 概念板块
 	}
 	var info Info
 	err := cli.call("/qt/stock/get", args, &data)
@@ -73,6 +77,8 @@ func (cli *Client) Info(code string) (Info, error) {
 	}
 	data.Area = strings.TrimSuffix(data.Area, "板块")
 	info.Code = data.Code
+	info.TotalCap = int64(data.TotalCap)
+	info.FloatCap = int64(data.FloatCap)
 	info.Name = data.Name
 	info.Industry = data.Industry
 	info.Area = data.Area
