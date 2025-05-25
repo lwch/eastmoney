@@ -17,10 +17,27 @@ type Client struct {
 	cli *http.Client
 }
 
-func New() *Client {
+func New(opts ...configFn) *Client {
+	var cfg config
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+	var tr http.Transport
+	if cfg.disableKeepAlive {
+		tr.DisableKeepAlives = true
+	}
+	if len(cfg.proxy) > 0 {
+		proxyURL, err := url.Parse(cfg.proxy)
+		if err != nil {
+			logging.Error("invalid proxy URL: %v", err)
+			return nil
+		}
+		tr.Proxy = http.ProxyURL(proxyURL)
+	}
 	return &Client{
 		cli: &http.Client{
-			Timeout: 10 * time.Second,
+			Transport: &tr,
+			Timeout:   10 * time.Second,
 		},
 	}
 }
