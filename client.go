@@ -14,8 +14,9 @@ import (
 )
 
 type Client struct {
-	cli *http.Client
-	ua  string
+	cli     *http.Client
+	ua      string
+	preCall func(*Client) error
 }
 
 func New(opts ...configFn) *Client {
@@ -40,11 +41,17 @@ func New(opts ...configFn) *Client {
 			Transport: &tr,
 			Timeout:   10 * time.Second,
 		},
-		ua: cfg.ua,
+		ua:      cfg.ua,
+		preCall: cfg.preCall,
 	}
 }
 
 func (cli *Client) call(api string, args url.Values, data any) error {
+	if cli.preCall != nil {
+		if err := cli.preCall(cli); err != nil {
+			return err
+		}
+	}
 	url := "https://push2his.eastmoney.com/api" + api + "?" + args.Encode()
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -152,5 +159,17 @@ func (cli *Client) callPaged(url string, args url.Values, append func(any) int) 
 		}
 		append(ret.Data.List)
 	}
+	return nil
+}
+
+func (cli *Client) SetProxy(proxy string) error {
+	if cli.cli.Transport == nil {
+		cli.cli.Transport = &http.Transport{}
+	}
+	proxyURL, err := url.Parse(proxy)
+	if err != nil {
+		return err
+	}
+	cli.cli.Transport.(*http.Transport).Proxy = http.ProxyURL(proxyURL)
 	return nil
 }

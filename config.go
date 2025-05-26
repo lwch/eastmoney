@@ -4,6 +4,7 @@ type config struct {
 	disableKeepAlive bool
 	proxy            string
 	ua               string
+	preCall          func(*Client) error
 }
 
 type configFn func(*config)
@@ -26,5 +27,12 @@ func Proxy(proxy string) configFn {
 func UserAgent(ua string) configFn {
 	return func(c *config) {
 		c.ua = ua
+	}
+}
+
+// PreCall sets a function to be called before each API call.
+func PreCall(fn func(*Client) error) configFn {
+	return func(c *config) {
+		c.preCall = fn
 	}
 }
