@@ -15,6 +15,7 @@ import (
 
 type Client struct {
 	cli *http.Client
+	ua  string
 }
 
 func New(opts ...configFn) *Client {
@@ -39,6 +40,7 @@ func New(opts ...configFn) *Client {
 			Transport: &tr,
 			Timeout:   10 * time.Second,
 		},
+		ua: cfg.ua,
 	}
 }
 
@@ -48,7 +50,9 @@ func (cli *Client) call(api string, args url.Values, data any) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36")
+	if len(cli.ua) > 0 {
+		req.Header.Set("User-Agent", cli.ua)
+	}
 	resp, err := cli.cli.Do(req)
 	if err != nil {
 		return err

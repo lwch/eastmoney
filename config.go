@@ -3,6 +3,7 @@ package eastmoney
 type config struct {
 	disableKeepAlive bool
 	proxy            string
+	ua               string
 }
 
 type configFn func(*config)
@@ -18,5 +19,12 @@ func DisableKeepAlive() configFn {
 func Proxy(proxy string) configFn {
 	return func(c *config) {
 		c.proxy = proxy
+	}
+}
+
+// UserAgent sets the User-Agent header for HTTP requests.
+func UserAgent(ua string) configFn {
+	return func(c *config) {
+		c.ua = ua
 	}
 }
