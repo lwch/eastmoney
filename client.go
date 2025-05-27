@@ -21,6 +21,7 @@ type Client struct {
 
 func New(opts ...configFn) *Client {
 	var cfg config
+	cfg.timeout = 10 * time.Second
 	for _, opt := range opts {
 		opt(&cfg)
 	}
@@ -39,7 +40,7 @@ func New(opts ...configFn) *Client {
 	return &Client{
 		cli: &http.Client{
 			Transport: &tr,
-			Timeout:   10 * time.Second,
+			Timeout:   cfg.timeout,
 		},
 		ua:      cfg.ua,
 		preCall: cfg.preCall,

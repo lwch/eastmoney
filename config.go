@@ -1,6 +1,9 @@
 package eastmoney
 
+import "time"
+
 type config struct {
+	timeout          time.Duration
 	disableKeepAlive bool
 	proxy            string
 	ua               string
@@ -34,5 +37,12 @@ func UserAgent(ua string) configFn {
 func PreCall(fn func(*Client) error) configFn {
 	return func(c *config) {
 		c.preCall = fn
+	}
+}
+
+// Timeout sets the timeout for HTTP requests.
+func Timeout(d time.Duration) configFn {
+	return func(c *config) {
+		c.timeout = d
 	}
 }
