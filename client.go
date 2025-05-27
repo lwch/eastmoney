@@ -166,6 +166,10 @@ func (cli *Client) SetProxy(proxy string) error {
 	if cli.cli.Transport == nil {
 		cli.cli.Transport = &http.Transport{}
 	}
+	if len(proxy) == 0 {
+		cli.cli.Transport.(*http.Transport).Proxy = nil
+		return nil
+	}
 	proxyURL, err := url.Parse(proxy)
 	if err != nil {
 		return err
