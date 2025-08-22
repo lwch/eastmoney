@@ -75,7 +75,8 @@ func (cli *Client) Daily(code string, begin, end time.Time, right right) ([]Tick
 	args.Set("klt", "101")
 	// 0（不复权）、1（前复权）、2（后复权）
 	args.Set("fqt", right.arg())
-	if code[0] == '6' {
+	if code[0] == '6' || // 沪市
+		code[0] == '5' { // 上证ETF
 		args.Set("secid", "1."+code)
 	} else {
 		args.Set("secid", "0."+code)
