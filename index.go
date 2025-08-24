@@ -6,6 +6,69 @@ import (
 	"time"
 )
 
+type IndexItem struct {
+	Code string `json:"f12"` // 代码
+	Name string `json:"f14"` // 名称
+}
+
+// IndexSH 获取上交所指数列表
+func (cli *Client) IndexSH() ([]IndexItem, error) {
+	args := make(url.Values)
+	args.Set("pn", "1")
+	args.Set("pz", "100")
+	args.Set("po", "1")
+	args.Set("np", "1")
+	args.Set("fltt", "2")
+	args.Set("invt", "2")
+	args.Set("fid", "f3")
+	args.Set("fs", "m:1+t:1")
+	args.Set("fields", "f12,f14")
+	var list []IndexItem
+	err := cli.callPaged("https://88.push2.eastmoney.com/api/qt/clist/get", args, func(a any) int {
+		arr := a.([]any)
+		for _, item := range arr {
+			var index IndexItem
+			index.Code = "sh" + item.(map[string]any)["f12"].(string)
+			index.Name = item.(map[string]any)["f14"].(string)
+			list = append(list, index)
+		}
+		return len(arr)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+// IndexSZ 获取深交所指数列表
+func (cli *Client) IndexSZ() ([]IndexItem, error) {
+	args := make(url.Values)
+	args.Set("pn", "1")
+	args.Set("pz", "100")
+	args.Set("po", "1")
+	args.Set("np", "1")
+	args.Set("fltt", "2")
+	args.Set("invt", "2")
+	args.Set("fid", "f3")
+	args.Set("fs", "m:0+t:5")
+	args.Set("fields", "f12,f14")
+	var list []IndexItem
+	err := cli.callPaged("https://88.push2.eastmoney.com/api/qt/clist/get", args, func(a any) int {
+		arr := a.([]any)
+		for _, item := range arr {
+			var index IndexItem
+			index.Code = "sz" + item.(map[string]any)["f12"].(string)
+			index.Name = item.(map[string]any)["f14"].(string)
+			list = append(list, index)
+		}
+		return len(arr)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
 // IndexDaily 获取指数在指定范围内的数据
 // sh开头表示上交所指数
 // sz开头表示深交所指数
