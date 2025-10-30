@@ -95,6 +95,9 @@ func (cli *Client) callPaged(url string, args url.Values, append func(any) int) 
 	if err != nil {
 		return err
 	}
+	if len(cli.ua) > 0 {
+		req.Header.Set("User-Agent", cli.ua)
+	}
 	resp, err := cli.cli.Do(req)
 	if err != nil {
 		return err
