@@ -61,6 +61,7 @@ func (cli *Client) call(api string, args url.Values, data any) error {
 	if len(cli.ua) > 0 {
 		req.Header.Set("User-Agent", cli.ua)
 	}
+	req.Header.Set("Upgrade-Insecure-Requests", "1")
 	resp, err := cli.cli.Do(req)
 	if err != nil {
 		return err
@@ -98,6 +99,7 @@ func (cli *Client) callPaged(url string, args url.Values, append func(any) int) 
 	if len(cli.ua) > 0 {
 		req.Header.Set("User-Agent", cli.ua)
 	}
+	req.Header.Set("Upgrade-Insecure-Requests", "1")
 	resp, err := cli.cli.Do(req)
 	if err != nil {
 		return err
