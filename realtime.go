@@ -17,8 +17,8 @@ type RealTimeItem struct {
 	Close  float64 `json:"f18"` // 昨收盘
 }
 
-// KC 获取科创板实时数据
-func (cli *Client) KC() ([]RealTimeItem, error) {
+// CY 获取创业板实时数据
+func (cli *Client) CY() ([]RealTimeItem, error) {
 	args := make(url.Values)
 	args.Set("pn", "1")
 	args.Set("pz", "100")
