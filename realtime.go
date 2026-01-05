@@ -3,18 +3,18 @@ package eastmoney
 import "net/url"
 
 type RealTimeItem struct {
-	Code   string  `json:"f12"` // 代码
-	Name   string  `json:"f14"` // 名称
-	Value  float64 `json:"f2"`  // 最新价
-	Delta  float64 `json:"f3"`  // 涨跌幅
-	Diff   float64 `json:"f4"`  // 涨跌额
-	Amount float64 `json:"f5"`  // 成交量
-	Trun   float64 `json:"f6"`  // 成交额
-	Swing  float64 `json:"f7"`  // 振幅
-	High   float64 `json:"f15"` // 最高价
-	Low    float64 `json:"f16"` // 最低价
-	Open   float64 `json:"f17"` // 开盘价
-	Close  float64 `json:"f18"` // 昨收盘
+	Code     string  `json:"f12"` // 代码
+	Name     string  `json:"f14"` // 名称
+	Value    float64 `json:"f2"`  // 最新价
+	Delta    float64 `json:"f3"`  // 涨跌幅
+	Diff     float64 `json:"f4"`  // 涨跌额
+	Amount   float64 `json:"f5"`  // 成交量
+	Trun     float64 `json:"f6"`  // 成交额
+	Swing    float64 `json:"f7"`  // 振幅
+	High     float64 `json:"f15"` // 最高价
+	Low      float64 `json:"f16"` // 最低价
+	Open     float64 `json:"f17"` // 开盘价
+	PreClose float64 `json:"f18"` // 昨收盘
 }
 
 // CY 获取创业板实时数据
@@ -61,7 +61,7 @@ func (cli *Client) CY() ([]RealTimeItem, error) {
 			fund.High = getFloat(item.(map[string]any)["f15"])
 			fund.Low = getFloat(item.(map[string]any)["f16"])
 			fund.Open = getFloat(item.(map[string]any)["f17"])
-			fund.Close = getFloat(item.(map[string]any)["f18"])
+			fund.PreClose = getFloat(item.(map[string]any)["f18"])
 			list = append(list, fund)
 		}
 		return len(arr)
